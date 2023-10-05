@@ -1,18 +1,22 @@
-﻿var cancellationToken = new CancellationTokenSource().Token;
+﻿ConsumeWithAutoCommitAndManualOffsetStore();
 
-var config = new ConsumerConfig
+static void ConsumeWithAutoCommitAndManualOffsetStore()
 {
-    BootstrapServers = "host1:9092,host2:9092",
-    GroupId = "foo",
-    EnableAutoCommit = true,
-    EnableAutoOffsetStore = true,
-    AutoCommitIntervalMs = 5000,
-    AutoOffsetReset = AutoOffsetReset.Earliest
-};
+    var cancellationToken = new CancellationTokenSource().Token;
 
-using (var consumer = new ConsumerBuilder<Ignore, string>(config).Build())
-{
-    consumer.Subscribe("");
+    var config = new ConsumerConfig
+    {
+        BootstrapServers = "host1:9092,host2:9092",
+        GroupId = "kafkacommitstrategy",
+        EnableAutoCommit = true,
+        EnableAutoOffsetStore = false,
+        AutoCommitIntervalMs = 1000,
+        AutoOffsetReset = AutoOffsetReset.Earliest
+    };
+
+    using var consumer = new ConsumerBuilder<Ignore, string>(config).Build();
+
+    consumer.Subscribe("autocommitandmanualoffsetstore");
 
     while (true)
     {
